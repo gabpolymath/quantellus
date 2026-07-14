@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='12' r='10' stroke='%237C83FD' stroke-width='2'></circle><path d='M12 2a15 15 0 0 0 0 20' stroke='%237C83FD' stroke-width='1.5'></path><path d='M2 12h20' stroke='%237C83FD' stroke-width='1.5'></path><path d='M6 16l4-4 4 2 6-5' stroke='%2310b981' stroke-width='2.5'></path></svg>">
+    <link rel="stylesheet" href="/static/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+</head>
+<body>
+    <div class="container">
+        
+        <div class="top-navbar">
+            <div class="theme-switcher nav-about">
+                <a href="#" id="open-about" title="{{ t.about_title }}">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="16" x2="12" y2="12"></line>
+                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                    </svg>
+                </a>
+            </div>
+            
+            <div class="language-switcher nav-lang">
+                <a href="?lang=en" class="{% if lang == 'en' %}active{% endif %}">EN</a>
+                <a href="?lang=it" class="{% if lang == 'it' %}active{% endif %}">IT</a>
+            </div>
+
+            <div class="theme-switcher nav-theme">
+                <a href="#" id="theme-toggle" title="Toggle Light/Dark Mode">
+                    <svg id="theme-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                </a>
+            </div>
+        </div>
+
+        <header>
+            <h1><a href="/">{{ t.title }}</a></h1>
+            <p>{{ t.subtitle }}</p>
+        </header>
+
+        <div class="search-card">
+            <span class="data-label">{{ t.select_asset }}</span>
+            <form action="/" method="post" class="search-form" id="analysis-form" onsubmit="return validateForm(event)">
+                <input type="hidden" name="lang" value="{{ lang }}">
+                
+                <div style="flex: 1; display: flex; flex-direction: column; position: relative;">
+                    <select name="commodity_key" id="commodity-select" class="search-input" onchange="resetValidation()">
+                        <option value="" disabled {% if not result %}selected{% endif %}>
+                            {{ t.select_placeholder }}
+                        </option>
+                        {% for key, comm in commodities.items() %}
+                            <option value="{{ key }}" {% if result and result.selected_key == key %}selected{% endif %}>
+                                {{ t[comm.dict_key] }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    <span id="custom-error" style="color: var(--danger); font-size: 0.85rem; font-weight: 600; margin-top: 0.4rem; display: none;">
+                        {{ t.validation_select }}
+                    </span>
+                </div>
+
+                <button type="submit" class="btn-submit">{{ t.btn_submit }}</button>
+            </form>
+            
+            <script>
+                function validateForm(e) {
+                    const select = document.getElementById('commodity-select');
+                    const error = document.getElementById('custom-error');
+                    
+                    if (!select.value) {
+                        e.preventDefault();
+                        select.style.borderColor = 'var(--danger)';
+                        select.style.boxShadow = '0 0 10px rgba(255, 42, 85, 0.2)';
+                        error.style.display = 'block';
+                        return false;
+                    }
+                    return true;
+                }
+
+                function resetValidation() {
+                    const select = document.getElementById('commodity-select');
+                    const error = document.getElementById('custom-error');
+                    
+                    select.style.borderColor = '';
+                    select.style.boxShadow = '';
+                    error.style.display = 'none';
+                }
+            </script>
+        </div>
+
+        {% if error %}
+        <div class="error-card">
+            <strong>{{ t.error_log }}:</strong> {{ error }}
+        </div>
+        {% endif %}
+
+        {% if result %}
+        <div class="results-grid">
+            <div class="data-tile">
+                <span class="data-label">{{ t.global_ndvi }}</span>
+                <span class="data-value">{{ result.avg_ndvi }}</span>
+            </div>
+            <div class="data-tile">
+                <span class="data-label">{{ t.live_price }} {{ result.ticker }}</span>
+                <span class="data-value">${{ result.price }}</span>
+            </div>
+            <div class="data-tile">
+                <span class="data-label">{{ t.daily_change }}</span>
+                <span class="data-value" style="color: {{ result.change_color }};">{{ result.daily_change_str }}</span>
+            </div>
+            <div class="data-tile">
+                <span class="data-label">{{ t.volume }}</span>
+                <span class="data-value">{{ result.volume }}</span>
+            </div>
+        </div>
+
+        <div class="multi-region-container">
+            {% for region in result.regions %}
+            <div class="region-card">
+                <span class="data-label" style="color: var(--primary-hover); font-size: 0.95rem;">{{ t[region.name_key] }}</span>
+                <span class="data-label" style="font-size: 0.65rem;">{{ t.coords }}: {{ region.coords }} | {{ t.date }}: {{ region.date }}</span>
+                    <a href="/data/{{ region.image }}" target="_blank" title="{{ t.click_enlarge }}"> 
+                        <img src="/data/{{ region.image }}" alt="{{ t[region.name_key] }}" class="zoomable-image">
+                    </a>
+                <div class="region-stats">
+                    {{ t.local_ndvi }}: <strong>{{ region.ndvi }}</strong>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="chart-card">
+            <div class="chart-header">
+            <span class="data-label">{{ t.market_trend }} {{ result.ticker }} | {{ result.exchange }}</span>
+                <div class="chart-controls">
+                    <button type="button" onclick="window.changeChartType('candlestick')" class="btn-chart active" id="btn-candle">{{ t.candles }}</button>
+                    <button type="button" onclick="window.changeChartType('line')" class="btn-chart" id="btn-line">{{ t.line }}</button>
+                </div>
+            </div>
+            <div id="priceChart"></div>
+        </div>
+
+        <div class="signal-card {{ result.color_class }}">
+            <div class="status-text">{{ result.status }}</div>
+            <div class="signal-badge">{{ result.signal }}</div>
+            <hr class="signal-divider">
+            <span class="data-label">{{ t.macro_driver }}</span>
+            <p class="motivation-text">{{ result.motivation }}</p>
+        </div>
+        {% endif %}
+        
+        <footer>
+            <div class="footer-content">
+                <p>{{ t.footer_disclaimer }}</p>
+                <p>{{ t.footer_copyright }}</p>
+            </div>
+        </footer>
+    </div>
+
+    <div id="about-modal" class="modal-overlay">
+        <div class="modal-content search-card" style="margin: 0; border-left: 4px solid var(--primary); display: flex; flex-direction: column; gap: 1.5rem;">
+            <button id="close-about" class="modal-close">&times;</button>
+            
+            <div>
+                <h2 style="font-size: 1.5rem; margin-top: 0; margin-bottom: 1rem; color: var(--primary);">{{ t.about_title }}</h2>
+                <p style="color: var(--text-color); line-height: 1.6; font-size: 1rem; margin-bottom: 0;">
+                    {{ t.about_description }}
+                </p>
+            </div>
+            
+            <div>
+                <a href="https://github.com/g-projectech/quantellus" target="_blank" class="btn-github">
+                    <svg height="18" width="18" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.58-3.58-8-8-8z"></path>
+                    </svg>
+                    {{ t.github_btn }}
+                </a>
+            </div>
+
+            <div style="border-top: 1px solid var(--border-color); padding-top: 1rem;">
+                <p style="color: var(--text-muted); line-height: 1.5; font-size: 0.8rem; font-style: italic; margin: 0;">
+                    {{ t.about_note }}
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.CHART_DATA = {% if result and result.chart_data_json %}{{ result.chart_data_json | safe }}{% else %}[]{% endif %};
+    </script>
+    
+    <script src="/static/main.js"></script>
+</body>
+</html>

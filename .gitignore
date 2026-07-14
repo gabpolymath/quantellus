@@ -1,0 +1,20 @@
+#  venv
+venv/
+.venv/
+env/
+
+# Cache .py
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# security
+.env
+.env.local
+
+# File di sistema &  Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
