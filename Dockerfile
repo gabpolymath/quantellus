@@ -8,7 +8,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY src/ ./src/
 COPY data/ ./data/
 
-EXPOSE 8000
+# render
+EXPOSE 10000
 
-# server FASTAPI with uvicorn
-CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Avviamo uvicorn dicendogli di usare la porta dinamica passata da Render ($PORT).
+# Se la variabile $PORT non esiste, userà la porta 8000.
+CMD ["sh", "-c", "uvicorn src.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
