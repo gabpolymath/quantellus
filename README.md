@@ -73,10 +73,15 @@ To test the application on your local machine, follow these steps:
 ```
 
 4. **Start the FastAPI server:**
-
 ```bash
-   uvicorn src.main:app --host 0.0.0.0 --port 8081 --reload
+   uvicorn src.main:app --host 127.0.0.1 --port 8081 --reload
 ```
+ 
+  🔒 **Security note — `127.0.0.1` vs `0.0.0.0`:**
+  - `--host 127.0.0.1` (default here) binds the server to **localhost only**: it's reachable exclusively from your own machine. This is the safer default, especially on shared or public networks.
+  - `--host 0.0.0.0` binds the server to **all network interfaces**, making it reachable from any other device on the same network (e.g. to test from your phone or another computer on the same Wi-Fi). Only use this on networks you trust, since it exposes the app — including the `--reload` dev server — to anyone on that network.
+
+  ℹ️ **Port:** `8081` is just the default used in this guide — you can replace `--port 8081` with any free port on your machine, as long as you update the URL in the next step accordingly.
 
 5. **Open the dashboard:**
 
