@@ -1,4 +1,10 @@
 document.addEventListener("DOMContentLoaded", () => {
+    
+    const yearSpan = document.getElementById("year");
+    if (yearSpan) {
+        yearSpan.textContent = new Date().getFullYear();
+    }
+
     const themeToggleBtn = document.getElementById('theme-toggle');
     const themeIcon = document.getElementById('theme-icon');
     const currentTheme = localStorage.getItem('theme') || 'dark';

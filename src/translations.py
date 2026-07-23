@@ -54,7 +54,7 @@ TRANSLATIONS = {
         
         # 9. Footer Section
         "footer_disclaimer": "Disclaimer: The information provided does not constitute financial advice. Trading futures carries a high level of risk.",
-        "footer_copyright": "© 2026 Quantellus. All rights reserved.",
+        "footer_copyright": "Quantellus. All rights reserved.",
         
         # 10. Backend Logging & Error Exceptions
         "error_log": "Error Log",
@@ -120,7 +120,7 @@ TRANSLATIONS = {
         
         # 9. Footer Section
         "footer_disclaimer": "Disclaimer: Le informazioni fornite non costituiscono consulenza finanziaria. Il trading di futures comporta un alto rischio di perdita.",
-        "footer_copyright": "© 2026 Quantellus. Tutti i diritti riservati.",
+        "footer_copyright": "Quantellus. Tutti i diritti riservati.",
         
         # 10. Backend Logging & Error Exceptions
         "error_log": "Log Errore",
