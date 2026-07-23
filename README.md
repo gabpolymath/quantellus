@@ -36,6 +36,52 @@ $$ \overline{NDVI}_{global} = \frac{1}{M} \sum_{j=1}^{M} \overline{NDVI}_{R_j} $
 * **2 - Financial Correlation:** The `yfinance` API pulls live historical data for the matching commodity futures on the CBOT exchange — `ZW=F` for wheat, `ZC=F` for corn, and so on.
 * **3 - Algorithmic Signaling:** The aggregate $\overline{NDVI}_{global}$ gets compared against a predefined historical baseline, or pivot. Lower-than-average NDVI points to a potential supply constraint — a bullish signal — while higher NDVI suggests a biomass surplus, which reads as bearish.
 
+## 🚀 How to Run Locally
+
+To test the application on your local machine, follow these steps:
+
+1. **Clone the repository:**
+
+```bash
+   git clone https://github.com/g-projectech/quantellus.git
+   cd quantellus
+```
+
+2. **Create and activate a virtual environment:**
+
+   Create and activate a virtual environment:
+   This keeps the project dependencies isolated from your system.
+
+   On Windows:
+
+```bash
+   python -m venv venv
+   venv\Scripts\activate
+```
+
+   On macOS / Linux:
+
+```bash
+   python3 -m venv venv
+   source venv/bin/activate
+```
+
+3. **Install the dependencies:**
+
+```bash
+   pip install -r requirements.txt
+```
+
+4. **Start the FastAPI server:**
+
+```bash
+   uvicorn src.main:app --host 0.0.0.0 --port 8081 --reload
+```
+
+5. **Open the dashboard:**
+
+   Navigate to http://localhost:8081 or http://127.0.0.1:8081 in your browser.
+
 ## Geospatial Data Sources
 
 For transparency and reproducibility, all the static raster data in this project comes straight from the **Copernicus Data Space Ecosystem**. Below are the exact coordinates, acquisition dates, and direct links to the satellite imagery behind each NDVI computation:
