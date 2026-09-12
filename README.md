@@ -43,7 +43,7 @@ To test the application on your local machine, follow these steps:
 1. **Clone the repository:**
 
 ```bash
-   git clone https://github.com/g-projectech/quantellus.git
+   git clone https://github.com/gabpolymath/quantellus.git
    cd quantellus
 ```
 
